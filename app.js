@@ -2,9 +2,9 @@
   'use strict';
 
   angular.module('NarrowItDownApp', [])
-  .controller('NarrowItDownController', NarrowItDownController)
-  .service('MenuSearchService', MenuSearchService)
-  .directive('foundItems', FoundItemsDirective);
+    .controller('NarrowItDownController', NarrowItDownController)
+    .service('MenuSearchService', MenuSearchService)
+    .directive('foundItems', FoundItemsDirective);
 
   // ---------- Directive ----------
   function FoundItemsDirective() {
@@ -36,12 +36,13 @@
       }
 
       MenuSearchService.getMatchedMenuItems(ctrl.searchTerm)
-      .then(function (foundItems) {
-        ctrl.found = foundItems;
-        console.log(ctrl.found); // Check what gets returned
-      }).catch(function (error) {
-        console.error('Error searching for menu items:', error);
-      });
+        .then(function (foundItems) {
+          ctrl.found = foundItems;
+          console.log(ctrl.found); // Log the found items to inspect them
+        })
+        .catch(function (error) {
+          console.error('Error searching for menu items:', error);
+        });
     };
 
     ctrl.removeItem = function (itemIndex) {
@@ -59,14 +60,23 @@
         method: 'GET',
         url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'
       }).then(function (response) {
-        console.log(response.data); // Inspect the structure of the data
-        var allItems = response.data.menu_items || []; // Ensure there's a fallback
+        console.log(response.data); // Log the response to inspect it
+        var allItems = response.data; // If the structure is different, adjust accordingly
         var foundItems = [];
 
-        for (var i = 0; i < allItems.length; i++) {
-          var item = allItems[i];
-          if (item.description && item.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-            foundItems.push(item);
+        // Ensure we have an array or iterate through the keys if data is an object
+        if (Array.isArray(allItems)) {
+          for (var i = 0; i < allItems.length; i++) {
+            var item = allItems[i];
+            if (item.description && item.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+              foundItems.push(item);
+            }
+          }
+        } else if (allItems) {
+          for (var key in allItems) {
+            if (allItems[key].description && allItems[key].description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+              foundItems.push(allItems[key]);
+            }
           }
         }
 
