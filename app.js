@@ -59,43 +59,43 @@
   function MenuSearchService($http) {
     var service = this;
 
-    // Function to get matched menu items from the server or use mock data
+    // Function to get matched menu items from the server
     service.getMatchedMenuItems = function (searchTerm) {
-      // Mock data for testing
-      var mockData = [
-        {
-          name: 'Beef Burger',
-          short_name: 'BB',
-          description: 'A delicious beef burger with cheese and lettuce.'
-        },
-        {
-          name: 'Chicken Salad',
-          short_name: 'CS',
-          description: 'A healthy chicken salad with mixed vegetables.'
-        },
-        {
-          name: 'Veggie Wrap',
-          short_name: 'VW',
-          description: 'A wrap with fresh veggies and a tangy dressing.'
-        },
-        {
-          name: 'Fish Tacos',
-          short_name: 'FT',
-          description: 'Spicy fish tacos with fresh salsa and cilantro.'
-        }
-      ];
+      return $http({
+        method: 'GET',
+        url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'  // Firebase URL
+      }).then(function (response) {
+        // Log the entire response to inspect the structure of the returned data
+        console.log('Firebase response:', response.data);
 
-      return new Promise(function (resolve, reject) {
-        // Simulate async behavior like $http request
-        setTimeout(function () {
-          // Filter mock data by search term
-          var foundItems = mockData.filter(function (item) {
-            return item.description.toLowerCase().includes(searchTerm.toLowerCase());
-          });
-          
-          // Resolve the found items
-          resolve(foundItems);
-        }, 1000); // Simulate network delay
+        var allItems = response.data;  // Firebase data (could be an object or array)
+        var foundItems = [];
+
+        // Check if the data returned is an object (common in Firebase)
+        if (typeof allItems === 'object') {
+          // Loop through all the items if the data is an object (Firebase's default response)
+          for (var key in allItems) {
+            if (allItems.hasOwnProperty(key)) {
+              var item = allItems[key];
+              if (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+                foundItems.push(item);  // Add item to foundItems
+              }
+            }
+          }
+        } else if (Array.isArray(allItems)) {
+          // If it's an array, use the previous logic
+          for (var i = 0; i < allItems.length; i++) {
+            if (allItems[i].description && allItems[i].description.toLowerCase().includes(searchTerm.toLowerCase())) {
+              foundItems.push(allItems[i]);  // Add item to foundItems
+            }
+          }
+        }
+
+        // Return the list of found items
+        return foundItems;  
+      }).catch(function (error) {
+        console.error('Error fetching menu items:', error);
+        return [];  // Return an empty array on error
       });
     };
   }
