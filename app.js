@@ -18,37 +18,41 @@
     };
     return ddo;
   }
+// ---------- Controller ----------
+NarrowItDownController.$inject = ['MenuSearchService'];
+function NarrowItDownController(MenuSearchService) {
+  var ctrl = this;
 
-  // ---------- Controller ----------
-  NarrowItDownController.$inject = ['MenuSearchService'];
-  function NarrowItDownController(MenuSearchService) {
-    var ctrl = this;
+  ctrl.searchTerm = '';
+  ctrl.found = [];
+  ctrl.searched = false;
+  ctrl.loading = false;  // Add this line to track the loading state
 
-    ctrl.searchTerm = '';
-    ctrl.found = [];
-    ctrl.searched = false;
+  ctrl.getMatchedMenuItems = function () {
+    ctrl.searched = true;
+    ctrl.loading = true; // Set loading to true when search starts
+    if (!ctrl.searchTerm || ctrl.searchTerm.trim() === '') {
+      ctrl.found = [];
+      ctrl.loading = false;  // Set loading to false when no search term is entered
+      return;
+    }
 
-    ctrl.getMatchedMenuItems = function () {
-      ctrl.searched = true;
-      if (!ctrl.searchTerm || ctrl.searchTerm.trim() === '') {
-        ctrl.found = [];
-        return;
-      }
+    MenuSearchService.getMatchedMenuItems(ctrl.searchTerm)
+      .then(function (foundItems) {
+        ctrl.found = foundItems;
+        ctrl.loading = false; // Set loading to false when search is complete
+        console.log(ctrl.found); // Log the found items to inspect them
+      })
+      .catch(function (error) {
+        ctrl.loading = false; // Set loading to false in case of error
+        console.error('Error searching for menu items:', error);
+      });
+  };
 
-      MenuSearchService.getMatchedMenuItems(ctrl.searchTerm)
-        .then(function (foundItems) {
-          ctrl.found = foundItems;
-          console.log(ctrl.found); // Log the found items to inspect them
-        })
-        .catch(function (error) {
-          console.error('Error searching for menu items:', error);
-        });
-    };
-
-    ctrl.removeItem = function (itemIndex) {
-      ctrl.found.splice(itemIndex, 1);
-    };
-  }
+  ctrl.removeItem = function (itemIndex) {
+    ctrl.found.splice(itemIndex, 1);
+  };
+}
 
   // ---------- Service ----------
   MenuSearchService.$inject = ['$http'];
