@@ -23,11 +23,8 @@ function NarrowItDownController(MenuSearchService) {
   var ctrl = this;
   ctrl.searchTerm = '';
   ctrl.found = [];
-  ctrl.searched = false;
 
   ctrl.narrowItDown = function () {
-    ctrl.searched = true;
-
     if (!ctrl.searchTerm || ctrl.searchTerm.trim() === '') {
       ctrl.found = [];
       return;
@@ -39,7 +36,6 @@ function NarrowItDownController(MenuSearchService) {
       })
       .catch(function (error) {
         console.error(error);
-        ctrl.found = [];
       });
   };
 
