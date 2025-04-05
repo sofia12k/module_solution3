@@ -19,27 +19,21 @@
       margin-left: 6px;
     }
   </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
 </head>
 <body>
 
-  <div class="container" ng-controller="NarrowItDownController as ctrl">
-    <h1>Narrow Down Your Menu Choice</h1>
+<div class="container" ng-controller="NarrowItDownController as ctrl">
+  <h1>Narrow Down Menu Items</h1>
 
-    <div class="form-group">
-      <input type="text" class="form-control" ng-model="ctrl.searchTerm" placeholder="Search term">
-      <br>
-      <button class="btn btn-primary" ng-click="ctrl.narrowItDown()">Narrow It Down For Me!</button>
-    </div>
+  <input type="text" ng-model="ctrl.searchTerm" placeholder="Search term" class="form-control" style="max-width: 400px; display: inline-block;">
+  <button class="btn btn-primary" ng-click="ctrl.narrowDown()">Narrow It Down For Me!</button>
 
-    <found-items found="ctrl.found" on-remove="ctrl.removeItem(index)"></found-items>
+  <found-items found="ctrl.found" on-remove="ctrl.removeItem(index)"></found-items>
 
-    <div ng-if="ctrl.found.length === 0">
-      <p class="emptyMessage">Nothing found</p>
-    </div>
-  </div>
+  <div class="emptyMessage" ng-if="ctrl.nothingFound">Nothing found</div>
+</div>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <script src="app.js"></script>
-
+<script src="app.js"></script>
 </body>
 </html>
