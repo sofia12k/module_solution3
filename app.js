@@ -53,44 +53,44 @@
     };
   }
 
- MenuSearchService.$inject = ['$http'];
-function MenuSearchService($http) {
-  var service = this;
+  // --------- MenuSearchService ---------
+  MenuSearchService.$inject = ['$http'];
+  function MenuSearchService($http) {
+    var service = this;
 
-  // Function to get matched menu items from the server
-  service.getMatchedMenuItems = function (searchTerm) {
-    return $http({
-      method: 'GET',
-      url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'  // Firebase URL
-    }).then(function (response) {
-      // Log the entire response to inspect the structure of the returned data
-      console.log(response.data);
+    // Function to get matched menu items from the server
+    service.getMatchedMenuItems = function (searchTerm) {
+      return $http({
+        method: 'GET',
+        url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'  // Firebase URL
+      }).then(function (response) {
+        console.log(response.data);  // Log the entire response to inspect the structure of the returned data
 
-      var allItems = response.data;  // Firebase data (could be an object, not an array)
-      var foundItems = [];
+        var allItems = response.data;  // Firebase data (could be an object, not an array)
+        var foundItems = [];
 
-      // Check if the data returned is an object and handle accordingly
-      if (typeof allItems === 'object') {
-        // Loop through all the items if the data is an object
-        for (var key in allItems) {
-          if (allItems[key].description && allItems[key].description.toLowerCase().includes(searchTerm.toLowerCase())) {
-            foundItems.push(allItems[key]);  // Add item to foundItems
+        // Check if the data returned is an object and handle accordingly
+        if (typeof allItems === 'object') {
+          // Loop through all the items if the data is an object
+          for (var key in allItems) {
+            if (allItems[key].description && allItems[key].description.toLowerCase().includes(searchTerm.toLowerCase())) {
+              foundItems.push(allItems[key]);  // Add item to foundItems
+            }
+          }
+        } else if (Array.isArray(allItems)) {
+          // If it's an array, use the previous logic
+          for (var i = 0; i < allItems.length; i++) {
+            if (allItems[i].description && allItems[i].description.toLowerCase().includes(searchTerm.toLowerCase())) {
+              foundItems.push(allItems[i]);  // Add item to foundItems
+            }
           }
         }
-      } else if (Array.isArray(allItems)) {
-        // If it's an array, use the previous logic
-        for (var i = 0; i < allItems.length; i++) {
-          if (allItems[i].description && allItems[i].description.toLowerCase().includes(searchTerm.toLowerCase())) {
-            foundItems.push(allItems[i]);  // Add item to foundItems
-          }
-        }
-      }
 
-      return foundItems;  // Return the list of found items
-    }).catch(function (error) {
-      console.error('Error fetching menu items:', error);
-      return [];  // Return an empty array on error
-    });
-  };
+        return foundItems;  // Return the list of found items
+      }).catch(function (error) {
+        console.error('Error fetching menu items:', error);
+        return [];  // Return an empty array on error
+      });
+    };
   }
 })();
