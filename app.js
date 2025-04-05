@@ -64,7 +64,7 @@
         method: 'GET',
         url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'  // Firebase URL
       }).then(function (response) {
-        console.log("Firebase Response: ", response.data);  // Log the response to verify the data structure
+        console.log("Firebase Response Data:", response.data);  // Detailed logging to inspect data
 
         var allItems = response.data;  // This should be an object of items
         var foundItems = [];
@@ -78,7 +78,7 @@
             }
           }
         } else {
-          console.log("Data is not an object or array:", allItems); // Log in case the data isn't as expected
+          console.error("Data is not an object or array:", allItems); // Log in case the data isn't as expected
         }
 
         console.log("Found Items: ", foundItems);  // Log the items that were found
