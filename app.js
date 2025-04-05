@@ -7,7 +7,7 @@
     .service('MenuSearchService', MenuSearchService)
     .directive('foundItems', FoundItemsDirective);
 
-  // Directive to Display Found Items
+  // --------- Directive to Display Found Items ---------
   function FoundItemsDirective() {
     var ddo = {
       restrict: 'E',
@@ -20,7 +20,7 @@
     return ddo;
   }
 
-  // Controller for NarrowItDownApp
+  // --------- Controller ---------
   NarrowItDownController.$inject = ['MenuSearchService'];
   function NarrowItDownController(MenuSearchService) {
     var ctrl = this;
@@ -40,6 +40,7 @@
       // Call the service to get the matched menu items
       MenuSearchService.getMatchedMenuItems(ctrl.searchTerm)
         .then(function (foundItems) {
+          console.log('Found items:', foundItems);  // Log the found items
           ctrl.found = foundItems;  // Update the found list with results
         })
         .catch(function (error) {
@@ -53,41 +54,49 @@
     };
   }
 
-  // Service to fetch menu items from Firebase
+  // --------- Service ---------
   MenuSearchService.$inject = ['$http'];
   function MenuSearchService($http) {
     var service = this;
 
-    // Function to get matched menu items from the server
+    // Function to get matched menu items from the server or use mock data
     service.getMatchedMenuItems = function (searchTerm) {
-      return $http({
-        method: 'GET',
-        url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'  // Firebase URL
-      }).then(function (response) {
-        console.log("Firebase Response Data:", response.data);  // Detailed logging to inspect data
-
-        var allItems = response.data;  // This should be an object of items
-        var foundItems = [];
-
-        // Check if the data returned is an object and handle accordingly
-        if (typeof allItems === 'object') {
-          // Loop through all the items if the data is an object
-          for (var key in allItems) {
-            if (allItems[key].description && allItems[key].description.toLowerCase().includes(searchTerm.toLowerCase())) {
-              foundItems.push(allItems[key]);  // Add item to foundItems
-            }
-          }
-        } else {
-          console.error("Data is not an object or array:", allItems); // Log in case the data isn't as expected
+      // Mock data for testing
+      var mockData = [
+        {
+          name: 'Beef Burger',
+          short_name: 'BB',
+          description: 'A delicious beef burger with cheese and lettuce.'
+        },
+        {
+          name: 'Chicken Salad',
+          short_name: 'CS',
+          description: 'A healthy chicken salad with mixed vegetables.'
+        },
+        {
+          name: 'Veggie Wrap',
+          short_name: 'VW',
+          description: 'A wrap with fresh veggies and a tangy dressing.'
+        },
+        {
+          name: 'Fish Tacos',
+          short_name: 'FT',
+          description: 'Spicy fish tacos with fresh salsa and cilantro.'
         }
+      ];
 
-        console.log("Found Items: ", foundItems);  // Log the items that were found
-        return foundItems;  // Return the list of found items
-      }).catch(function (error) {
-        console.error('Error fetching menu items:', error);
-        return [];  // Return an empty array on error
+      return new Promise(function (resolve, reject) {
+        // Simulate async behavior like $http request
+        setTimeout(function () {
+          // Filter mock data by search term
+          var foundItems = mockData.filter(function (item) {
+            return item.description.toLowerCase().includes(searchTerm.toLowerCase());
+          });
+          
+          // Resolve the found items
+          resolve(foundItems);
+        }, 1000); // Simulate network delay
       });
     };
   }
-
 })();
