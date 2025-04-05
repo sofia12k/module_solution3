@@ -53,7 +53,8 @@ function MenuSearchService($http) {
       method: "GET",
       url: "https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json"
     }).then(function (response) {
-      var allItems = response.data.menu_items || response.data; // fallback in case no key
+      var data = response.data;
+      var allItems = data.menu_items ? Object.values(data.menu_items) : Object.values(data);
       var foundItems = [];
 
       for (var i = 0; i < allItems.length; i++) {
@@ -67,4 +68,5 @@ function MenuSearchService($http) {
     });
   };
 }
+
 })();
