@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en" ng-app="NarrowItDownApp">
 <head>
   <meta charset="UTF-8">
@@ -33,15 +33,13 @@
 
     <found-items found="ctrl.found" on-remove="ctrl.removeItem(index)"></found-items>
 
-    <div ng-if="ctrl.searched && ctrl.found.length === 0">
+    <div ng-if="ctrl.found.length === 0">
       <p class="emptyMessage">Nothing found</p>
     </div>
   </div>
 
-  <!-- AngularJS -->
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
   <script src="app.js"></script>
 
 </body>
 </html>
-
