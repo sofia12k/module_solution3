@@ -40,7 +40,6 @@
       // Call the service to get the matched menu items
       MenuSearchService.getMatchedMenuItems(ctrl.searchTerm)
         .then(function (foundItems) {
-          console.log('Found items:', foundItems);  // Log the found items
           ctrl.found = foundItems;  // Update the found list with results
         })
         .catch(function (error) {
@@ -59,37 +58,34 @@
   function MenuSearchService($http) {
     var service = this;
 
-  service.getMatchedMenuItems = function (searchTerm) {
-    console.log("Fetching data with search term:", searchTerm);
-    return $http({
-      method: 'GET',
-      url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'
-    }).then(function (response) {
-      console.log('Firebase response:', response.data);
-      var allItems = response.data;  // Firebase data (could be an object or array)
-      var foundItems = [];
-  
-      if (typeof allItems === 'object') {
-        for (var key in allItems) {
-          if (allItems.hasOwnProperty(key)) {
-            var item = allItems[key];
+    // Function to get matched menu items from the server
+    service.getMatchedMenuItems = function (searchTerm) {
+      return $http({
+        method: 'GET',
+        url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'  // Firebase URL
+      }).then(function (response) {
+        console.log('Firebase response:', response.data);  // Log the raw response
+
+        var allItems = response.data.menu_items;  // Firebase data (should be an array)
+        var foundItems = [];
+
+        // Check if the data returned is an array
+        if (Array.isArray(allItems)) {
+          // Loop through all the items
+          for (var i = 0; i < allItems.length; i++) {
+            var item = allItems[i];
             if (item.description && item.description.toLowerCase().includes(searchTerm.toLowerCase())) {
-              foundItems.push(item);
+              foundItems.push(item);  // Add item to foundItems
             }
           }
         }
-      } else if (Array.isArray(allItems)) {
-        for (var i = 0; i < allItems.length; i++) {
-          if (allItems[i].description && allItems[i].description.toLowerCase().includes(searchTerm.toLowerCase())) {
-            foundItems.push(allItems[i]);
-          }
-        }
-      }
-      return foundItems;
-    }).catch(function (error) {
-      console.error('Error fetching menu items:', error);
-      return [];
-    });
-  };
+
+        return foundItems;  // Return the list of found items
+      }).catch(function (error) {
+        console.error('Error fetching menu items:', error);
+        return [];  // Return an empty array on error
+      });
+    };
   }
+
 })();
