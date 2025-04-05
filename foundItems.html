@@ -1,6 +1,11 @@
-<ul>
-  <li ng-repeat="item in found track by $index">
-    {{ item.name }}, ({{ item.short_name }}), {{ item.description }}
-    <button class="btn btn-danger btn-sm" ng-click="onRemove({ index: $index })">Don't want this one!</button>
-  </li>
-</ul>
+<div ng-if="found.length > 0">
+  <ul>
+    <li ng-repeat="item in found">
+      {{ item.name }} - {{ item.description }}
+      <button ng-click="onRemove({index: $index})">Remove</button>
+    </li>
+  </ul>
+</div>
+<div ng-if="found.length === 0">
+  <p>No items found.</p>
+</div>
