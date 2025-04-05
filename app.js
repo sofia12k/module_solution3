@@ -56,38 +56,43 @@ function NarrowItDownController(MenuSearchService) {
 
   // ---------- Service ----------
   MenuSearchService.$inject = ['$http'];
-  function MenuSearchService($http) {
-    var service = this;
+function MenuSearchService($http) {
+  var service = this;
 
-    service.getMatchedMenuItems = function (searchTerm) {
-      return $http({
-        method: 'GET',
-        url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'
-      }).then(function (response) {
-        console.log(response.data); // Log the response to inspect it
-        var allItems = response.data; // If the structure is different, adjust accordingly
-        var foundItems = [];
+  service.getMatchedMenuItems = function (searchTerm) {
+    return $http({
+      method: 'GET',
+      url: 'https://coursera-jhu-default-rtdb.firebaseio.com/menu_items.json'
+    }).then(function (response) {
+      console.log('API Response:', response.data); // Inspect the structure of the data
+      var allItems = response.data; // Ensure this is the correct path to the data
+      var foundItems = [];
 
-        // Ensure we have an array or iterate through the keys if data is an object
-        if (Array.isArray(allItems)) {
-          for (var i = 0; i < allItems.length; i++) {
-            var item = allItems[i];
-            if (item.description && item.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-              foundItems.push(item);
-            }
-          }
-        } else if (allItems) {
-          for (var key in allItems) {
-            if (allItems[key].description && allItems[key].description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
-              foundItems.push(allItems[key]);
-            }
+      // If the response is an array, iterate through it
+      if (Array.isArray(allItems)) {
+        for (var i = 0; i < allItems.length; i++) {
+          var item = allItems[i];
+          if (item.description && item.description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+            foundItems.push(item);
           }
         }
+      } else if (allItems) {
+        // If it's an object (Firebase can sometimes return objects instead of arrays)
+        for (var key in allItems) {
+          if (allItems[key].description && allItems[key].description.toLowerCase().indexOf(searchTerm.toLowerCase()) !== -1) {
+            foundItems.push(allItems[key]);
+          }
+        }
+      }
 
-        return foundItems;
-      }).catch(function (error) {
-        console.error('Error fetching menu items:', error);
-      });
+      console.log('Found Items:', foundItems); // Log the filtered items
+      return foundItems;
+    }).catch(function (error) {
+      console.error('Error fetching menu items:', error);
+    });
+  };
+}
+
     };
   }
 
