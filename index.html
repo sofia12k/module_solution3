@@ -2,46 +2,37 @@
 <html lang="en" ng-app="NarrowItDownApp">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Narrow It Down App</title>
-  <!-- Include AngularJS -->
+  <title>Narrow Down Your Menu Choice</title>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
-  <!-- Include app.js -->
   <script src="app.js"></script>
+  <style>
+    .emptyMessage {
+      font-weight: bold;
+      color: red;
+      font-size: 1.2em;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+  </style>
 </head>
 <body>
+  <div class="container" ng-controller="NarrowItDownController as narrowItDown">
+    <h1>Narrow Down Your Menu Choice</h1>
 
-  <div class="container" ng-controller="NarrowItDownController as ctrl">
-
-    <h1>Narrow It Down!</h1>
-
-    <!-- Input search field -->
-    <div>
-      <label for="searchTerm">Search for a menu item:</label>
-      <input type="text" id="searchTerm" ng-model="ctrl.searchTerm">
-      <button ng-click="ctrl.getMatchedMenuItems()">Narrow It Down For Me!</button>
+    <div class="form-group">
+      <input type="text" ng-model="narrowItDown.searchTerm" placeholder="Search term" class="form-control">
+      <button class="btn btn-primary" ng-click="narrowItDown.getMatchedMenuItems()">Narrow It Down For Me!</button>
     </div>
 
-    <!-- Display the found items using the directive -->
-    <found-items found="ctrl.found" on-remove="ctrl.removeItem(index)"></found-items>
+    <found-items
+      found="narrowItDown.found"
+      on-remove="narrowItDown.removeItem(index)">
+    </found-items>
 
-    <div ng-if="ctrl.searched && ctrl.found.length === 0">
-      <p>No items found for "{{ ctrl.searchTerm }}".</p>
+    <div class="emptyMessage" ng-if="narrowItDown.found.length === 0 && narrowItDown.searched">
+      Nothing found
     </div>
-
   </div>
-
-  <!-- Template for displaying found items -->
-  <script type="text/ng-template" id="foundItems.html">
-    <div ng-if="found.length > 0">
-      <ul>
-        <li ng-repeat="item in found">
-          {{ item.name }} - {{ item.short_name }} - {{ item.description }}
-          <button ng-click="onRemove({index: $index})">Don't want this one!</button>
-        </li>
-      </ul>
-    </div>
-  </script>
-
 </body>
 </html>
