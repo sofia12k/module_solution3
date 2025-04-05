@@ -1,27 +1,40 @@
 <!doctype html>
-<html lang="en" ng-app='MenuItemsApp'>
-  <head>
-    <title>Narrow Down Your Menu Choice</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script src="angular.js"></script>
-        <script src="app.js"></script>
-    <link rel="stylesheet" href="bootstrap.min.css">
-    <link rel="stylesheet" href="styles.css">
-  </head>
+<html lang="en" ng-app="NarrowItDownApp">
+<head>
+  <meta charset="UTF-8">
+  <title>Narrow Down Menu Items</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <style>
+    .emptyMessage {
+      font-weight: bold;
+      color: red;
+      font-size: 1.2em;
+    }
+    li {
+      margin-bottom: 7px;
+      font-size: 1.2em;
+    }
+    li > button {
+      margin-left: 6px;
+    }
+  </style>
+  <script src="angular.js"></script>
+</head>
 <body>
-   <div class="container" ng-controller="MenuItemsController as menu">
-    <h1>Narrow Down Your Chinese Menu Choice</h1>
 
-    <div class="form-group">
-      <input type="text" placeholder="search term" class="form-control" ng-model="menu.searchTerm">
-    </div>
-    <div class="form-group narrow-button">
-      <button class="btn btn-primary" ng-click="menu.logMenuItems()">Narrow It Down For Me!</button>
-    </div>
+<div class="container" ng-controller="NarrowItDownController as ctrl">
+  <h1>Narrow Down Menu Items</h1>
 
-    <!-- found-items should be implemented as a component -->
-    <found-items items="menu.items" on-remove="menu.removeItem(itemIndex)"></found-items>
-  </div>
+  <input type="text" ng-model="ctrl.searchTerm" placeholder="Search term" class="form-control" style="max-width: 400px; display: inline-block;">
+  <button class="btn btn-primary" ng-click="ctrl.narrowDown()">Narrow It Down For Me!</button>
 
+  <found-items found="ctrl.found" on-remove="ctrl.removeItem(index)"></found-items>
+
+  <div class="emptyMessage" ng-if="ctrl.nothingFound">Nothing found</div>
+</div>
+
+<script src="app.js"></script>
 </body>
 </html>
+
